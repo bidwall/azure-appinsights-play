@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 
@@ -8,14 +7,12 @@ namespace ConsoleApp
 {
     class Program
     {
-        private static TelemetryClient _telemetryClient;
-
         static void Main(string[] args)
         {
             SetupTelemetry();
             WriteTelemetry();
 
-            //Console.ReadKey();
+            Console.ReadKey();
         }
 
         static void SetupTelemetry()
@@ -24,20 +21,16 @@ namespace ConsoleApp
                                 .SetBasePath(Directory.GetCurrentDirectory())
                                 .AddJsonFile("appsettings.json");
 
-            var instrumentationKey = builder.Build()["instrumentationKey"];
-
-            TelemetryConfiguration.Active.InstrumentationKey = instrumentationKey;
-
-            _telemetryClient = new TelemetryClient();
+            TelemetryConfiguration.Active.InstrumentationKey = builder.Build()["instrumentationKey"];
         }
 
         static void WriteTelemetry()
         {
-            WriteTrace("message");
-            WriteEvent("event");
-            WriteException(new Exception("Exception"));
+            WriteTrace("some message");
+            WriteEvent("some event");
+            WriteException(new Exception("some exception"));
 
-            _telemetryClient.Flush();       // more efficient not to flush, but ok for playing ;-)
+            TelemetryLogger.Flush();       // more efficient not to flush, but ok for playing ;-)
         }
 
         static void WriteTrace(string message)
